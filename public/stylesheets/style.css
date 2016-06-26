@@ -1,0 +1,168 @@
+@import url(https://fonts.googleapis.com/css?family=Play:400,700);
+
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  margin: 0 auto;
+  min-width: 1024px;
+  max-width: fill-available;
+}
+
+a {
+    color: black;
+    text-decoration: none !important;
+}
+
+header {
+    background-color:silver;
+    height:150px;
+    padding:5px;
+    margin-top:-50px;
+    box-shadow: 0 15px 15px -5px silver;
+    border-radius: 0 0 7px 7px;
+}
+
+header img {
+    width:auto;
+    height:150px;
+    float:left;
+    position:relative;
+}
+
+#page_title h1 {
+    font-family: 'Play', sans-serif;
+    text-align: center;font-size: 30px;
+}
+
+a:visited {color: black;}
+a:hover {color: white;text-decoration: dotted;}
+
+input { height: 25px; padding: 3px; border-radius: 5px; border: 1px solid silver; box-shadow: 5px 5px 3px #888888; }
+button { height: 35px; width: 75px; border-radius: 5px; background-color: #56AAD6; border: 1px solid silver; padding: 5px; box-shadow: 5px 5px 3px #888888 ; color:  white;}
+h1, h2 { font-family: 'Play', sans-serif;text-shadow: 2px 2px 2px silver; }
+
+/* Navigation */
+#navigation {
+    top: 42px;
+    right: -5px;
+    margin-top: auto;
+    margin-bottom: auto;
+    text-align: center;
+    background-color: #56AAD6;
+    padding: 8px;
+    border-radius: 20px 2px 2px 20px;
+    width: auto;
+    height: auto;
+    float: right;
+    position: relative; 
+}
+
+#navigation h1, h2 {
+    position:relative;
+    z-index: initial;
+    text-shadow: none;
+    color: white;
+}
+
+#navigation a {
+    color: white;    
+}
+
+#navigation a:hover {
+    color: black;
+}
+
+/* Welcome Page */
+#welcome_container {
+    /*margin-left: auto;
+    margin-right: auto;*/
+    text-align: center;
+}
+
+#welcome_container h1, h2 {
+    color: black;
+}
+
+#welcome_container .sign_in {
+    top: -160px;
+    position:relative;
+    margin: 5%;
+    display: inline-block;
+}
+
+#welcome_container .sign_up {
+    top: -85px;
+    margin: 5%;
+    position:relative;
+    display: inline-block;
+}
+
+#welcome_container .corporate_banners {
+    top: -10px;
+    position:relative;
+    margin: 5%;
+    display: inline-block;
+}
+
+#welcome_container .corporate_banners img {
+    width:225px;
+    height:auto;
+    margin: 10px;
+}
+
+/*Connect to Azure */
+#connect_to_azure {
+    /*margin-left: 0 auto;
+    margin-right: 0 auto;
+        */
+    text-align: center;
+}
+
+#connect_to_azure .connect {
+    margin: 0 auto;
+    /*text-align: left;*/
+}
+
+/* Dashboard Page */
+#dashboard_container {
+    margin-left: 5%;
+    margin-right: 5%;
+    text-align: center;
+}
+
+#dashboard_container h1 {
+    color: white;
+}
+
+#dashboard_container .widget_outer {
+
+    position:relative;
+    width:45%;
+    height:575px;
+    background-color:silver;
+    margin:2.5%;
+    text-align:center;
+    display: inline-block;
+    word-wrap: break-word;
+
+    border-radius: 5px;
+    box-shadow: 5px 5px 3px #888888;
+}
+
+#dashboard_container .widget_inner {
+    width:auto;
+    height:85%;
+    background-color:white;
+    margin:10px;
+    border-radius:5px;
+    padding: 5px 10px 5px 10px;
+}
+
+footer {
+    clear:both;
+    background-color:white;
+    height:50px;box-shadow: 0 10px 5px -2px silver;
+    border-radius:7px;
+    color:black;
+    text-align:center;
+}

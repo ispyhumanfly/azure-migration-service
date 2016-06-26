@@ -1,0 +1,76 @@
+// Dashboard Template
+
+extends layout
+
+block content
+
+    section
+        h1#page_title= title
+
+        #dashboard_container
+            
+            .widget_outer(style='float:left;')
+                h1 Azure Service Manager
+                
+                .widget_inner
+                    #asm_content
+
+                    <!-- Tabs -->
+                    #services
+                    
+                    script(type='text/javascript')
+                        $(document).ready(function(){
+                                $.ajax({
+                                    url: '/azure/asm/service/list',
+                                    type: "GET",
+                                    async: false,
+                                    success: function(response){
+
+                                        $('#services').append('<ul>');
+
+                                        $.each($.parseJSON(response), function(idx, obj) {
+
+                                            $('#services').append('<li><a href="#' + obj.serviceName + '">' + obj.serviceName + '</a></li>');
+                                        });
+
+                                        $('#services').append('</ul>');
+                                            
+
+                                        var date = new Date($.now());
+                                        $('#migration_content').append("<p style='font-size: 10px;'>" + date + ": ASM Services Listed</p>"); 
+                                    }
+                                });
+
+                                $("#services").tabs();
+                        });
+
+            .widget_outer(style='float:right;')
+                h1 Azure Resource Manager
+
+                .widget_inner
+                    #arm_content
+
+                        script(type='text/javascript')
+                            $(document).ready(function(){
+                                $.ajax({
+                                    url: '/azure/arm/group/list',
+                                    type: "GET",
+                                    async: false,
+                                    success: function(response){
+
+                                        $.each($.parseJSON(response), function(idx, obj) {
+
+                                            $('#arm_content').append('<p>' + obj.name + '</p>');
+                                        });
+
+                                        var date = new Date($.now());
+                                        $('#migration_content').append("<p style='font-size: 10px;'>" + date + ": ARM Groups Listed</p>");                                        
+                                    }
+                                });
+                            });
+            .widget_outer
+                h1 Migration Monitor
+           
+                .widget_inner
+                    #migration_content(style='text-align: left;')
+

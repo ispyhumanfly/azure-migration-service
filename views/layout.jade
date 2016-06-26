@@ -1,0 +1,45 @@
+doctype 5
+html
+  head
+    title = title
+    
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/jquery-ui.structure.min.css')
+    link(rel='stylesheet', href='/stylesheets/jquery-ui.theme.min.css')
+    
+    script(src="/javascripts/jquery-2.2.4.min.js")
+    script(src="/javascripts/jquery-ui.min.js")
+
+    script(type='text/javascript')
+        $(document).ready(function() {
+            $('*').hide();
+            $('*').each(function() {
+                $(this).fadeIn(1000);
+            });
+        });
+  body
+    header
+        img(src='/images/coretek_cloud_logo_medium.png')
+        
+        #navigation
+
+            - if (typeof(account_name) !== 'undefined'){
+                
+                h2 
+                    a(href="/#{account_name}") #{account_name} | 
+                    a(href='/support') Support | 
+                    a(href='/signout') Sign Out
+                
+            - } else { 
+
+                h2
+                    a(target="_blank", href='http://www.coretekservices.com/who-we-are/') Who We Are | 
+                    a(target="_blank", href='http://www.coretekservices.com/services/') Services |
+                    a(target="_blank", href='http://www.coretekservices.com/blog/') Blog |
+                    a(target="_blank", href='http://www.coretekservices.com/contact/') Contact  
+            - } 
+
+    block content
+
+    footer
+        p 38505 Country Club Drive, Suite 210, Farmington Hills, Michigan 48331 | 844-4CORETEK (844-426-7383) 

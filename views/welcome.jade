@@ -1,0 +1,43 @@
+// Welcome Template
+
+extends layout
+
+block content
+
+    section
+        h1#page_title= title
+    
+        #welcome_container
+            .sign_in
+                h2 Sign In
+
+                form(method="POST", action="/signin")
+                    p Account Name
+                    input(type="text", name="account_name")
+                    p Account Password
+                    input(type="password", name="account_password")
+                    p
+                    button(type="submit") Sign In
+
+            .sign_up
+                h2 Sign Up
+
+                form(method="POST", action="/signup")
+                    p Customer Name
+                    input(type="text", name="customer_name")
+                    p Customer Email
+                    input(type="email", name="customer_email")
+                    p Customer Phone Number
+                    input(type="phone", name="customer_phone")
+                    p Customer Password
+                    input(type="password", name="customer_password")
+                    p
+                    button(type="submit") Sign Up
+  
+            .corporate_banners
+
+                img(src='/images/coretek_services_logo_96_96.png')
+                br
+                img(src='/images/microsoft_azure_logo.png')
+                br
+                img(src='/images/microsoft_partner.jpg')
