@@ -22,6 +22,7 @@
     "express-async": "^0.1.3",
     "express-parameters": "*",
     "express-session": "*",
+    "flat-file-db": "^1.0.0",
     "jade": "*",
     "tedious": "^1.14.0"
   },

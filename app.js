@@ -7,6 +7,7 @@ var session = require('express-session');
 //var param = require('express-parameters');
 var bodyParser = require('body-parser');
 var async = require('async');    
+var flatfile = require('flat-file-db');
 var app = express();
 
 app.configure(function(){
@@ -30,19 +31,7 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-// SQL Database Config
-var Connection = require('tedious').Connection;
-
-var config = {
-    userName: 'sa',
-    password: 'aslk102*rmA0wq',
-    server: 'localhost',
-    
-    // If you're on Windows Azure, you will need this:
-    options: {encrypt: true}
- };
-
-var connection = new Connection(config);
+var DB = flatfile("ams.db");
 
 // Welcome Page
 
