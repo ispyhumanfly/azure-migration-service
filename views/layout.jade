@@ -23,10 +23,10 @@ html
         
         #navigation
 
-            - if (typeof(account_name) !== 'undefined'){
+            - if (typeof(name) !== 'undefined'){
                 
                 h2 
-                    a(href="/#{account_name}") #{account_name} | 
+                    a(href="/#{name}") #{name} | 
                     a(href='/support') Support | 
                     a(href='/signout') Sign Out
                 

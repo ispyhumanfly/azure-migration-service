@@ -31,7 +31,7 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-var DB = flatfile("ams.db");
+var DB = flatfile.sync("app.db");
 
 // Welcome Page
 
@@ -39,7 +39,7 @@ app.get('/', function (req, res) {
 
     if (req.session.name) { res.redirect('/dashboard/' + req.session.name); }
     
-    res.render('welcome', { title: 'Welcome to the Azure Migration Service', account_name: undefined });
+    res.render('welcome', { title: 'Welcome to the Azure Migration Service', name: undefined });
 
 });
 
@@ -48,37 +48,53 @@ app.get('/welcome', function (req, res) { res.redirect('/');});
 // Sign In Form Handler
 app.post('/signin', function (req, res)
 {
-
-    if (req.body.account_name && req.body.account_password)
+  if (req.body.name && req.body.password)
+  {
+    DB.keys().forEach(function(id)
     {
+      var account = DB.get(id)
 
-        req.session.name = req.body.account_name;
-        
-        res.redirect('/dashboard/' + req.session.name);
-    }
-    else
-    {
-        res.redirect('/');
-    }
+      if(account.name === req.body.name)
+      {
+        if(account.password === req.body.password)
+        {
+          req.session.name = account.name;
+          res.redirect('/dashboard/' + req.session.name);
+        }
+      }
+    })
+  }
+  res.redirect('/');
 });
 
 // Sign Up Form
 app.post('/signup', function (req, res) {
 
-    //req.session.customer_name = req.body.customer_name;
-    //req.session.customer_email = req.body.customer_email;
-    //req.session.customer_phone = req.body.customer_phone;
+    if (req.body.name && req.body.email && req.body.phone && req.body.password) 
+    {
+      var id = DB.keys().length + 1;
 
-    if (req.body.customer_name) {
-        res.redirect('/account_pending/' + req.body.customer_name);   
+      DB.put(id, {
+        name: req.body.name, 
+        email: req.body.email,
+        phone: req.body.phone,
+        password: req.body.password,
+        azure_asm_login: null,
+        azure_asm_password: null,
+        azure_arm_login: null,
+        azure_arm_password: null,
+        activated: false
+      });
+      
+      res.redirect('/activation/' + req.body.name);   
     }
 });
 
-// Account Pending Page
-app.get('/account_pending/:customer_name', function (req, res) {
+// Activation Page
+app.get('/activation/:name', function (req, res) {
 
-    if (req.params.customer_name) {
-        res.render('account_pending', { title: 'AMS Account Creation Pending...', customer_name: req.params.customer_name });
+    if (req.params.name) {
+        res.render('activation', { title: 'AMS Account Activation Pending', name: req.params.name });
     }
     else {
         res.redirect('/');
@@ -99,10 +115,10 @@ app.get('/dashboard', function (req, res)
     if (req.session.name) { res.redirect('/dashboard/' + req.session.name); }
 });
 
-app.get('/dashboard/:account_name', function (req, res)
+app.get('/dashboard/:name', function (req, res)
 {
-    if ( req.session === null || req.session.name != req.params.account_name ) { res.redirect('/signout'); }
-    res.render('dashboard', { title: 'Azure Migration Service Dashboard', account_name: req.params.account_name, azure_subscription: '1231231231231' });
+    if ( req.session === null || req.session.name != req.params.name ) { res.redirect('/signout'); }
+    res.render('dashboard', { title: 'Azure Migration Service Dashboard', name: req.params.name, azure_subscription: '1231231231231' });
 });
 
 /*
@@ -110,7 +126,7 @@ app.get('/dashboard/:account_name', function (req, res)
 */
 
 // Azure ASM Login 
-app.post('/azure/asm/login/:account_name', function (req, res)
+app.post('/azure/asm/login/:name', function (req, res)
 {
 
     if (req.body.azure_username && req.body.azure_password)
@@ -125,7 +141,7 @@ app.post('/azure/asm/login/:account_name', function (req, res)
         });
 
         //res.json(JSON.parse(azure.stdout.pipe(process.stdout)));
-        //res.redirect('/dashboard/' + req.params.account_name);
+        //res.redirect('/dashboard/' + req.params.name);
     }
 });
 
