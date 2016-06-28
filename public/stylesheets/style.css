@@ -138,7 +138,7 @@ h1, h2 { font-family: 'Play', sans-serif;text-shadow: 2px 2px 2px silver; }
 
     position:relative;
     width:45%;
-    height:575px;
+    height:auto;
     background-color:silver;
     margin:2.5%;
     text-align:center;
@@ -151,7 +151,7 @@ h1, h2 { font-family: 'Play', sans-serif;text-shadow: 2px 2px 2px silver; }
 
 #dashboard_container .widget_inner {
     width:auto;
-    height:85%;
+    height:auto;
     background-color:white;
     margin:10px;
     border-radius:5px;

@@ -13,64 +13,48 @@ block content
                 h1 Azure Service Manager
                 
                 .widget_inner
-                    #asm_content
-
-                    <!-- Tabs -->
                     #services
                     
                     script(type='text/javascript')
-                        /*$(document).ready(function(){
-                                $.ajax({
-                                    url: '/azure/asm/service/list',
-                                    type: "GET",
-                                    async: false,
-                                    success: function(response){
+                        $(document).ready(function(){
+                            $.ajax({
+                                url: '/azure/asm/service/list',
+                                type: "GET",
+                                async: false,
+                                success: function(response){
+                                    
+                                    $.each($.parseJSON(response), function(idx, obj) 
+                                    {
+                                        $('#services').append('<h3>' + obj.serviceName + '</h3>');
+                                        $('#services').append('<div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec feugiat est bibendum tempor imperdiet. Suspendisse hendrerit, sapien eu vehicula volutpat, urna nunc pulvinar lorem, id dignissim mi libero fermentum diam. Integer facilisis tortor in turpis faucibus, sollicitudin sagittis metus bibendum. Vivamus eget iaculis eros. Etiam pretium quam urna, ut vulputate erat euismod sit amet. Aenean non metus varius, fermentum mauris id, venenatis erat. Aliquam erat volutpat. Suspendisse sed magna vel libero porta ultrices ac quis mi. Nulla eleifend congue sem, non interdum sem condimentum ultrices. Maecenas ut semper augue. Aenean at risus a dui aliquet bibendum. Aenean tempus ipsum vitae velit pellentesque tristique. </div>');
+                                    });
+                                }
+                            });
 
-                                        $('#services').append('<ul>');
-
-                                        $.each($.parseJSON(response), function(idx, obj) {
-
-                                            $('#services').append('<li><a href="#' + obj.serviceName + '">' + obj.serviceName + '</a></li>');
-                                        });
-
-                                        $('#services').append('</ul>');
-                                            
-
-                                        var date = new Date($.now());
-                                        $('#migration_content').append("<p style='font-size: 10px;'>" + date + ": ASM Services Listed</p>"); 
-                                    }
-                                });
-
-                                $("#services").tabs();
-                        });*/
+                            $("#services").accordion();
+                        });
 
             .widget_outer(style='float:right;')
                 h1 Azure Resource Manager
 
                 .widget_inner
-                    #arm_content
+                    #groups
 
-                        script(type='text/javascript')
-                            /*$(document).ready(function(){
-                                $.ajax({
-                                    url: '/azure/arm/group/list',
-                                    type: "GET",
-                                    async: false,
-                                    success: function(response){
+                    script(type='text/javascript')
+                        $(document).ready(function(){
+                            $.ajax({
+                                url: '/azure/arm/group/list',
+                                type: "GET",
+                                async: false,
+                                success: function(response){
+                                    
+                                    $.each($.parseJSON(response), function(idx, obj) 
+                                    {
+                                        $('#groups').append('<h3>' + obj.name + '</h3>');
+                                        $('#groups').append('<div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec feugiat est bibendum tempor imperdiet. Suspendisse hendrerit, sapien eu vehicula volutpat, urna nunc pulvinar lorem, id dignissim mi libero fermentum diam. Integer facilisis tortor in turpis faucibus, sollicitudin sagittis metus bibendum. Vivamus eget iaculis eros. Etiam pretium quam urna, ut vulputate erat euismod sit amet. Aenean non metus varius, fermentum mauris id, venenatis erat. Aliquam erat volutpat. Suspendisse sed magna vel libero porta ultrices ac quis mi. Nulla eleifend congue sem, non interdum sem condimentum ultrices. Maecenas ut semper augue. Aenean at risus a dui aliquet bibendum. Aenean tempus ipsum vitae velit pellentesque tristique. </div>');
+                                    });
+                                }
+                            });
 
-                                        $.each($.parseJSON(response), function(idx, obj) {
-
-                                            $('#arm_content').append('<p>' + obj.name + '</p>');
-                                        });
-
-                                        var date = new Date($.now());
-                                        $('#migration_content').append("<p style='font-size: 10px;'>" + date + ": ARM Groups Listed</p>");                                        
-                                    }
-                                });
-                            });*/
-            .widget_outer
-                h1 Migration Monitor
-           
-                .widget_inner
-                    #migration_content(style='text-align: left;')
-
+                            $("#groups").accordion();
+                        });

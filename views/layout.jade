@@ -4,8 +4,7 @@ html
     title = title
     
     link(rel='stylesheet', href='/stylesheets/style.css')
-    link(rel='stylesheet', href='/stylesheets/jquery-ui.structure.min.css')
-    link(rel='stylesheet', href='/stylesheets/jquery-ui.theme.min.css')
+    link(rel='stylesheet', href='/stylesheets/jquery-ui.min.css')
     
     script(src="/javascripts/jquery-2.2.4.min.js")
     script(src="/javascripts/jquery-ui.min.js")
@@ -26,7 +25,7 @@ html
             - if (typeof(name) !== 'undefined'){
                 
                 h2 
-                    a(href="/#{name}") #{name} | 
+                    a(href="javascript:$('#dialog').dialog('open')") #{name} | 
                     a(href='/support') Support | 
                     a(href='/signout') Sign Out
                 

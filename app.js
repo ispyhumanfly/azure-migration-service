@@ -58,8 +58,15 @@ app.post('/signin', function (req, res)
       {
         if(account.password === req.body.password)
         {
-          req.session.name = account.name;
-          res.redirect('/dashboard/' + req.session.name);
+          if(account.activated)
+          {
+            req.session.name = account.name;
+            res.redirect('/dashboard/' + req.session.name);
+          }
+          else 
+          {
+            res.redirect('/activation/' + account.name);
+          }
         }
       }
     })
@@ -91,34 +98,33 @@ app.post('/signup', function (req, res) {
 });
 
 // Activation Page
-app.get('/activation/:name', function (req, res) {
-
-    if (req.params.name) {
-        res.render('activation', { title: 'AMS Account Activation Pending', name: req.params.name });
-    }
-    else {
-        res.redirect('/');
-    }
+app.get('/activation/:name', function (req, res) 
+{
+  if (req.params.name) 
+  {
+    res.render('activation', { title: 'AMS Account Activation', name: req.params.name })
+  }
+  res.redirect('/')
 });
 
 // Sign Out Form Handler
-app.get('/signout', function (req, res) {
-
-    req.session = null;
-    res.redirect('/');
+app.get('/signout', function (req, res) 
+{
+  req.session = null;
+  res.redirect('/');
 });
 
 // Dashboard Page
 app.get('/dashboard', function (req, res)
 {
-    if (req.session === null) { res.redirect('/'); }
-    if (req.session.name) { res.redirect('/dashboard/' + req.session.name); }
+  if (req.session === null) { res.redirect('/') }
+  if (req.session.name) { res.redirect('/dashboard/' + req.session.name) }
 });
 
 app.get('/dashboard/:name', function (req, res)
 {
-    if ( req.session === null || req.session.name != req.params.name ) { res.redirect('/signout'); }
-    res.render('dashboard', { title: 'Azure Migration Service Dashboard', name: req.params.name, azure_subscription: '1231231231231' });
+  if ( req.session === null || req.session.name != req.params.name ) { res.redirect('/signout') }
+  res.render('dashboard', { title: 'AMS Dashboard', name: req.params.name })
 });
 
 /*
@@ -170,7 +176,19 @@ app.get('/azure/asm/account/list', function (req, res)
 // Azure ASM Service List
 app.get('/azure/asm/service/list', function (req, res, next)
 {
+  var command = require('child_process').exec;
 
+  command("azure config mode asm", function (error, stdout, stderr)
+  {
+      console.log(stdout);
+  });
+  
+  var azure = 'powershell.exe -WindowStyle Hidden -NoLogo -Command "azure service list --json"';
+
+  command(azure, function (error, stdout, stderr)
+  {
+    res.json(stdout)
+  });
 });
 
 /* 
@@ -207,28 +225,16 @@ app.get('/azure/arm/group/list', function (req, res, next)
  
     var command = require('child_process').exec;
 
-    async.series([
-        function(callback){
-            command("azure config mode arm", function (error, stdout, stderr)
-            {
-                console.log(stdout);
-            });
-            
-            callback();     
-        },
-        function(callback){
-            
-            var azure = 'powershell.exe -WindowStyle Hidden -NoLogo -Command "azure group list --json"';
+    command("azure config mode arm", function (error, stdout, stderr)
+    {
+        console.log(stdout);
+    });
+    
+    var azure = 'powershell.exe -WindowStyle Hidden -NoLogo -Command "azure group list --json"';
 
-            command(azure, function (error, stdout, stderr)
-            {
-                callback(error, stdout);
-            });
-        }
-    ], function(error, stdout){
-
-        if (error) return next(error);
-        res.json(stdout);
+    command(azure, function (error, stdout, stderr)
+    {
+      res.json(stdout)
     });
 });
 
