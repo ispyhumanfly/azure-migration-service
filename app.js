@@ -45,6 +45,52 @@ app.get('/', function (req, res) {
 
 app.get('/welcome', function (req, res) { res.redirect('/');});
 
+// Activation Page
+app.get('/activation/:name', function (req, res) 
+{
+  if (req.params.name) 
+  {
+    res.render('activation', { title: 'AMS Account Activation', name: req.params.name })
+  }
+  res.redirect('/')
+});
+
+// Dashboard Page
+app.get('/dashboard', function (req, res)
+{
+  if (req.session === null) { res.redirect('/') }
+  if (req.session.name) { res.redirect('/dashboard/' + req.session.name) }
+});
+
+app.get('/dashboard/:name', function (req, res)
+{
+  if ( req.session === null || req.session.name !== req.params.name ) { res.redirect('/signout') }
+  res.render('dashboard', { title: 'AMS Dashboard', name: req.params.name })
+})
+
+app.get('/profile/:name', function(req, res) 
+{
+  if (req.params.name) 
+  {
+    if (req.params.name === req.session.name) 
+    {
+      DB.keys().forEach(function(id)
+      {
+        var account = DB.get(id)
+
+        if(account.name === req.session.name)
+        {
+          res.render('profile', { title: 'AMS Profile of ' + req.params.name + '', name: req.params.name, account: account })
+        }
+      })
+    }
+  }
+  else 
+  {
+    res.redirect('/welcome')
+  }
+})
+
 // Sign In Form Handler
 app.post('/signin', function (req, res)
 {
@@ -61,25 +107,28 @@ app.post('/signin', function (req, res)
           if(account.activated)
           {
             req.session.name = account.name;
-            res.redirect('/dashboard/' + req.session.name);
+            res.redirect('/dashboard/' + req.session.name)
           }
           else 
           {
-            res.redirect('/activation/' + account.name);
+            res.redirect('/activation/' + account.name)
           }
         }
       }
     })
   }
-  res.redirect('/');
-});
+  else 
+  {
+    res.redirect('/')
+  }
+})
 
-// Sign Up Form
+// Sign Up Form Handler
 app.post('/signup', function (req, res) {
 
     if (req.body.name && req.body.email && req.body.phone && req.body.password) 
     {
-      var id = DB.keys().length + 1;
+      var id = DB.keys().length + 1
 
       DB.put(id, {
         name: req.body.name, 
@@ -91,21 +140,14 @@ app.post('/signup', function (req, res) {
         azure_arm_login: null,
         azure_arm_password: null,
         activated: false
-      });
-      
-      res.redirect('/activation/' + req.body.name);   
+      })    
+      res.redirect('/activation/' + req.body.name) 
     }
-});
-
-// Activation Page
-app.get('/activation/:name', function (req, res) 
-{
-  if (req.params.name) 
-  {
-    res.render('activation', { title: 'AMS Account Activation', name: req.params.name })
-  }
-  res.redirect('/')
-});
+    else 
+    {
+      res.redirect('/')
+    }
+})
 
 // Sign Out Form Handler
 app.get('/signout', function (req, res) 
@@ -114,40 +156,41 @@ app.get('/signout', function (req, res)
   res.redirect('/');
 });
 
-// Dashboard Page
-app.get('/dashboard', function (req, res)
-{
-  if (req.session === null) { res.redirect('/') }
-  if (req.session.name) { res.redirect('/dashboard/' + req.session.name) }
-});
-
-app.get('/dashboard/:name', function (req, res)
-{
-  if ( req.session === null || req.session.name != req.params.name ) { res.redirect('/signout') }
-  res.render('dashboard', { title: 'AMS Dashboard', name: req.params.name })
-});
-
 /*
-  C o r e t e k   C l o u d   S e r v i c e s 
+  C o r e t e k   C l o u d   C o n t r o l l e r 
 */
 
-// Azure ASM Login 
-app.post('/azure/asm/login/:name', function (req, res)
+// Azure Login 
+app.get('/azure/login/:azure_username/:azure_password', function (req, res)
 {
 
-    if (req.body.azure_username && req.body.azure_password)
+    if (req.params.azure_username && req.params.azure_password)
     {
         var command = require('child_process').exec;
 
-        var azure = 'azure login -u ' + req.body.azure_username + ' -p ' + req.body.azure_password + ' --json';
+        var azure = 'azure login -u ' + req.params.azure_username + ' -p ' + req.params.azure_password + ' --json';
 
         command(azure, function (error, stdout, stderr)
         {
-            res.json(JSON.parse(error));
-        });
+          res.json(stdout)
+        })
+    }
+});
 
-        //res.json(JSON.parse(azure.stdout.pipe(process.stdout)));
-        //res.redirect('/dashboard/' + req.params.name);
+// Azure Logout 
+app.get('/azure/logout/:azure_username', function (req, res)
+{
+
+    if (req.params.azure_username)
+    {
+        var command = require('child_process').exec;
+
+        var azure = 'azure logout -u ' + req.params.azure_username + ' --json';
+
+        command(azure, function (error, stdout, stderr)
+        {
+          res.json(stdout)
+        })
     }
 });
 
@@ -166,11 +209,29 @@ app.get('/azure/asm/account/list', function (req, res)
     });
 
     var azure = 'powershell.exe -WindowStyle Hidden -NoLogo -Command "azure account list --json"';
-
+  
     command(azure, function (error, stdout, stderr)
     {
-        res.json(stdout);
+      res.json(stdout)
+    })
+});
+
+// Azure ASM Account Set
+app.put('/azure/asm/account/set/:tenantId', function (req, res)
+{
+    var command = require('child_process').exec;
+
+    command("azure config mode asm", function (error, stdout, stderr)
+    {
+        console.log(stdout);
     });
+
+    var azure = 'powershell.exe -WindowStyle Hidden -NoLogo -Command "azure account set ' + req.params.tenantId + ' --json"';
+  
+    command(azure, function (error, stdout, stderr)
+    {
+        res.json(stdout)
+    })
 });
 
 // Azure ASM Service List
@@ -191,52 +252,100 @@ app.get('/azure/asm/service/list', function (req, res, next)
   });
 });
 
+// Azure ASM Service Show
+app.get('/azure/asm/service/show/:serviceName', function (req, res)
+{
+    var command = require('child_process').exec;
+
+    command("azure config mode asm", function (error, stdout, stderr)
+    {
+        console.log(stdout);
+    });
+    
+    var azure = 'powershell.exe -WindowStyle Hidden -NoLogo -Command "azure service show --serviceName ' + req.params.serviceName + ' --json"';
+
+    command(azure, function (error, stdout, stderr)
+    {
+      res.json(stdout)
+    })
+});
+
 /* 
   Azure Resource Manager Services 
 */
 
 // Azure ARM Account List
-app.get('/azure/arm/account/list', function (req, res, next)
+app.get('/azure/arm/account/list', function (req, res)
 {
-    var command = require('child_process').exec;
-
-    setTimeout(function(){
-        command("azure config mode arm", function (error, stdout, stderr)
-        {
-            console.log(stdout);
-        });
-    }, 3000);
-
-    var azure = 'powershell.exe -WindowStyle Hidden -NoLogo -Command "azure account list --json"';
-
-    command(azure, function (error, stdout, stderr)
-    {
-        setTimeout(function(){
-            res.json(stdout);
-        }, 3000);
-    });
-
-    next();
-});
-
-// Azure ARM Group List
-app.get('/azure/arm/group/list', function (req, res, next)
-{
- 
     var command = require('child_process').exec;
 
     command("azure config mode arm", function (error, stdout, stderr)
     {
         console.log(stdout);
-    });
+    })
+
+    var azure = 'powershell.exe -WindowStyle Hidden -NoLogo -Command "azure account list --json"';
+  
+    command(azure, function (error, stdout, stderr)
+    {
+        res.json(stdout)
+    })
+})
+
+
+// Azure ARM Account Set
+app.put('/azure/arm/account/set/:tenantId', function (req, res)
+{
+    var command = require('child_process').exec;
+
+    command("azure config mode arm", function (error, stdout, stderr)
+    {
+        console.log(stdout);
+    })
+
+    var azure = 'powershell.exe -WindowStyle Hidden -NoLogo -Command "azure account set ' + req.params.tenantId + ' --json"';
+  
+    command(azure, function (error, stdout, stderr)
+    {
+        res.json(stdout)
+    })
+})
+
+// Azure ARM Group List
+app.get('/azure/arm/group/list', function (req, res)
+{
+    var command = require('child_process').exec;
+
+    command("azure config mode arm", function (error, stdout, stderr)
+    {
+        console.log(stdout);
+    })
     
     var azure = 'powershell.exe -WindowStyle Hidden -NoLogo -Command "azure group list --json"';
 
     command(azure, function (error, stdout, stderr)
     {
       res.json(stdout)
-    });
-});
+    })
+})
+
+// Azure ARM Resource List
+app.get('/azure/arm/resource/list/:name', function (req, res)
+{
+    var command = require('child_process').exec;
+
+    command("azure config mode arm", function (error, stdout, stderr)
+    {
+        console.log(stdout);
+    })
+    
+    var azure = 'powershell.exe -WindowStyle Hidden -NoLogo -Command "azure resource list ' + req.params.name + ' --json"';
+
+    command(azure, function (error, stdout, stderr)
+    {
+      res.json(stdout)
+    })
+})
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Coretek AMS Server Listening @ Port: " + app.get('port'));

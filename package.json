@@ -24,6 +24,7 @@
     "express-session": "*",
     "flat-file-db": "^1.0.0",
     "jade": "*",
+    "redis": "^2.6.2",
     "tedious": "^1.14.0"
   },
   "noAnalyze": true,

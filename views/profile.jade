@@ -1,0 +1,26 @@
+// Profile Template
+
+extends layout
+
+block content
+
+    section
+        h1#page_title= title
+
+        h2 Update Profile
+
+            form(method="POST", action="/profile/" + account.name + "/update")
+                p Name
+                input(type="text", name="name", value="#{account.name}", placeholder="#{account.name")
+                p Password
+                input(type="password", name="password", value="#{account.password}", placeholder="#{account.password}")
+                p Email
+                input(type="text", name="email", value="#{account.email}", placeholder="#{account.email}")
+                p Phone
+                input(type="text", name="phone", value="#{account.phone}", placeholder="#{account.phone}")
+                p Azure ASM Login
+                input(type="text", name="name")
+                p Azure ASM Password
+                input(type="password", name="password")
+                p
+                button(type="submit") Update

@@ -11,12 +11,13 @@ html
 
     script(type='text/javascript')
         $(document).ready(function() {
-            $('*').hide();
+            $('*').hide()
             $('*').each(function() {
-                $(this).fadeIn(1000);
-            });
-        });
-  body
+                $(this).fadeIn(2000)
+            })
+        })
+body
+
     header
         img(src='/images/coretek_cloud_logo_medium.png')
         
@@ -25,7 +26,7 @@ html
             - if (typeof(name) !== 'undefined'){
                 
                 h2 
-                    a(href="javascript:$('#dialog').dialog('open')") #{name} | 
+                    a(href="/profile/#{name}") #{name} | 
                     a(href='/support') Support | 
                     a(href='/signout') Sign Out
                 
