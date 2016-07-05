@@ -34,14 +34,11 @@ app.configure('development', function(){
 var DB = flatfile.sync("app.db");
 
 // Welcome Page
-
 app.get('/', function (req, res) {
 
     if (req.session.name) { res.redirect('/dashboard/' + req.session.name); }
-    
-    res.render('welcome', { title: 'Welcome to the Azure Migration Service', name: undefined });
-
-});
+    res.render('welcome', { title: 'Welcome to the Azure Migration Service', name: undefined })
+})
 
 app.get('/welcome', function (req, res) { res.redirect('/');});
 
@@ -68,9 +65,16 @@ app.get('/dashboard/:name', function (req, res)
   res.render('dashboard', { title: 'AMS Dashboard', name: req.params.name })
 })
 
+// Profile Page
+app.get('/profile', function (req, res)
+{
+  if (req.session === null) { res.redirect('/') }
+  if (req.session.name) { res.redirect('/profile/' + req.session.name) }
+})
+
 app.get('/profile/:name', function(req, res) 
 {
-  if (req.params.name) 
+  if (req.params.name && req.session.name) 
   {
     if (req.params.name === req.session.name) 
     {
@@ -91,7 +95,16 @@ app.get('/profile/:name', function(req, res)
   }
 })
 
-// Sign In Form Handler
+// Sign Out
+app.get('/signout', function (req, res) 
+{
+  req.session = null;
+  res.redirect('/')
+})
+
+/* Form Handlers */
+
+// Sign In
 app.post('/signin', function (req, res)
 {
   if (req.body.name && req.body.password)
@@ -123,7 +136,7 @@ app.post('/signin', function (req, res)
   }
 })
 
-// Sign Up Form Handler
+// Sign Up
 app.post('/signup', function (req, res) {
 
     if (req.body.name && req.body.email && req.body.phone && req.body.password) 
@@ -149,16 +162,53 @@ app.post('/signup', function (req, res) {
     }
 })
 
-// Sign Out Form Handler
-app.get('/signout', function (req, res) 
+// Profile Form 
+app.post('/profile/:name/update', function(req, res)
 {
-  req.session = null;
-  res.redirect('/');
-});
+  if (req.session.name && req.params.name)
+  {
+    if (req.body.name && req.body.email && req.body.phone && req.body.password) 
+    {
+      DB.keys().forEach(function(id)
+      {
+        var account = DB.get(id)
+
+        if (account.name === req.params.name) 
+        {
+          DB.del(id)
+
+          DB.put(id, {
+            name: req.body.name, 
+            email: req.body.email,
+            phone: req.body.phone,
+            password: req.body.password,
+            azure_asm_login: req.body.azure_asm_login,
+            azure_asm_password: req.body.azure_asm_password,
+            azure_arm_login: req.body.azure_arm_login,
+            azure_arm_password: req.body.azure_arm_password,
+            activated: true
+          })
+          
+          DB.close()
+
+          req.session.name = req.body.name
+          res.redirect('/profile/' + req.session.name)    
+        }
+      })
+      DB.close()
+    }
+  }
+  else
+  {
+    res.redirect('/')
+  }
+})
 
 /*
-  C o r e t e k   C l o u d   C o n t r o l l e r 
+  C o r e t e k   C l o u d   C o n t r o l 
 */
+
+/* Microsoft Azure Services */
 
 // Azure Login 
 app.get('/azure/login/:azure_username/:azure_password', function (req, res)
@@ -194,9 +244,7 @@ app.get('/azure/logout/:azure_username', function (req, res)
     }
 });
 
-/* 
-  Azure Service Manager Services 
-*/
+/* Azure Service Manager */
 
 // Azure ASM Account List
 app.get('/azure/asm/account/list', function (req, res)
@@ -223,7 +271,7 @@ app.put('/azure/asm/account/set/:tenantId', function (req, res)
 
     command("azure config mode asm", function (error, stdout, stderr)
     {
-        console.log(stdout);
+        console.log(stdout)
     });
 
     var azure = 'powershell.exe -WindowStyle Hidden -NoLogo -Command "azure account set ' + req.params.tenantId + ' --json"';
@@ -270,9 +318,7 @@ app.get('/azure/asm/service/show/:serviceName', function (req, res)
     })
 });
 
-/* 
-  Azure Resource Manager Services 
-*/
+/* Azure Resource Manager */
 
 // Azure ARM Account List
 app.get('/azure/arm/account/list', function (req, res)
@@ -347,6 +393,13 @@ app.get('/azure/arm/resource/list/:name', function (req, res)
     })
 })
 
+/* Amazon Web Services */
+
+/*
+    Under design for a future milestone
+*/
+
+// AMS Server Properties
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Coretek AMS Server Listening @ Port: " + app.get('port'));
 });

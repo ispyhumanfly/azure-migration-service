@@ -9,7 +9,7 @@ block content
 
         h2 Update Profile
 
-            form(method="POST", action="/profile/" + account.name + "/update")
+            form(method="POST", action="/profile/#{account.name}/update")
                 p Name
                 input(type="text", name="name", value="#{account.name}", placeholder="#{account.name")
                 p Password
@@ -19,8 +19,12 @@ block content
                 p Phone
                 input(type="text", name="phone", value="#{account.phone}", placeholder="#{account.phone}")
                 p Azure ASM Login
-                input(type="text", name="name")
+                input(type="text", name="azure_asm_login", value="#{account.azure_asm_login}", placeholder="#{account.azure_asm_login}")
                 p Azure ASM Password
-                input(type="password", name="password")
+                input(type="password", name="azure_asm_password", value="#{account.azure_asm_password}", placeholder="#{account.azure_asm_password}")
+                p Azure ARM Login
+                input(type="text", name="azure_arm_login", value="#{account.azure_arm_login}", placeholder="#{account.azure_arm_login}")
+                p Azure ARM Password
+                input(type="password", name="azure_arm_password", value="#{account.azure_arm_password}", placeholder="#{account.azure_arm_password}")
                 p
                 button(type="submit") Update
