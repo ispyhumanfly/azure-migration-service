@@ -128,12 +128,14 @@ app.post('/signin', function (req, res)
           }
         }
       }
+      res.redirect('/')
     })
   }
   else 
   {
     res.redirect('/')
   }
+  //res.redirect('/')
 })
 
 // Sign Up
